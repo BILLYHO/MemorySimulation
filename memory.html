@@ -43,7 +43,7 @@ canvas#main{
     var sf=[2500];
     var bf= [0];
     var blockf=[sf,bf];
-    
+
     var ext=[0];
     
     var pro = 1;
@@ -54,127 +54,63 @@ canvas#main{
     var flagb,flagw,flagf;
     var timer;
     
-    window.onload=function() 
+    window.onload=function()
     {
     var mycontext1=document.getElementById("bestfit").getContext('2d');
     var mycontext2=document.getElementById("worstfit").getContext('2d');
     var mycontext3=document.getElementById("firstfit").getContext('2d');
-    
+
     next=Math.floor(Math.random()*400);
     if(next<150)
         next += 150;
     flag = 1;
     
 
-    
-    showBestfit();
-    showWorstfit();
-    showFirstfit();
+    showBlock("bestfit",blockb);
+    showBlock("worstfit",blockw);
+    showBlock("firstfit",blockf);
+
+    //showBestfit();
+    //showWorstfit();
+    //showFirstfit();
     mmsg();
     }
-  
-    function showBestfit()
+
+    function showBlock(name, block)
     {
-        var mycontext1=document.getElementById("bestfit").getContext('2d');
+        var mycontext=document.getElementById(name).getContext('2d');
         var sum = 0;
-        for(var i=0; i<bestFitBlockCSizeArr.length; i++)
+        for(var i=0; i < block[0].length; i++)
         {
-            r = bestFitBlockCSizeArr[i]/2;
-            if(blockb[1][i]==0)
+            r = block[0][i]/2;
+            if(block[1][i]==0)
             {
-                mycontext1.fillStyle='yellow'; 
-                mycontext1.fillRect(sum,0,r,100);
-                mycontext1.strokeStyle='black';
-                mycontext1.strokeRect(sum,0,r,100);
-                mycontext1.fillStyle='black';
-                mycontext1.font = '15pt Calibri';
-                mycontext1.textAlign='center'; 
-                mycontext1.fillText( r*2 + 'KB', sum+r/2, 50);
+                mycontext.fillStyle='yellow';
+                mycontext.fillRect(sum,0,r,100);
+                mycontext.strokeStyle='black';
+                mycontext.strokeRect(sum,0,r,100);
+                mycontext.fillStyle='black';
+                mycontext.font = '15pt Calibri';
+                mycontext.textAlign='center';
+                mycontext.fillText( r*2 + 'KB', sum+r/2, 50);
             }
             else
             {
-                mycontext1.fillStyle='red';
-                mycontext1.fillRect(sum,0,r,100);
-                mycontext1.strokeStyle='black';
-                mycontext1.strokeRect(sum,0,r,100);
-                mycontext1.fillStyle='black';
-                mycontext1.font = '15pt Calibri';
-                mycontext1.textAlign='center';
-                mycontext1.fillText( 'ID:' + blockb[1][i], sum+r/2, 30); 
-                mycontext1.fillText( r*2 + 'KB', sum+r/2, 60);
-            }
-            
-            sum += r;
-        }
-    }
-    
-    function showWorstfit()
-    {
-        var mycontext2=document.getElementById("worstfit").getContext('2d');
-        var sum = 0;
-        for(var i=0; i<blockw[0].length; i++)
-        {
-            r = blockw[0][i]/2;
-            if(blockw[1][i]==0)
-            {
-                mycontext2.fillStyle='yellow'; 
-                mycontext2.fillRect(sum,0,r,100);
-                mycontext2.strokeStyle='black';
-                mycontext2.strokeRect(sum,0,r,100);
-                mycontext2.fillStyle='black';
-                mycontext2.font = '15pt Calibri';
-                mycontext2.textAlign='center'; 
-                mycontext2.fillText( r*2 + 'KB', sum+r/2, 50);
-            }
-            else
-            {
-                mycontext2.fillStyle='red';
-                mycontext2.fillRect(sum,0,r,100);
-                mycontext2.strokeStyle='black';
-                mycontext2.strokeRect(sum,0,r,100);
-                mycontext2.fillStyle='black';
-                mycontext2.font = '15pt Calibri';
-                mycontext2.textAlign='center';
-                mycontext2.fillText( 'ID:' + blockw[1][i], sum+r/2, 30); 
-                mycontext2.fillText( r*2 + 'KB', sum+r/2, 60);
+                mycontext.fillStyle='red';
+                mycontext.fillRect(sum,0,r,100);
+                mycontext.strokeStyle='black';
+                mycontext.strokeRect(sum,0,r,100);
+                mycontext.fillStyle='black';
+                mycontext.font = '15pt Calibri';
+                mycontext.textAlign='center';
+                mycontext.fillText( 'ID:' + blockb[1][i], sum+r/2, 30);
+                mycontext.fillText( r*2 + 'KB', sum+r/2, 60);
             }
             sum += r;
         }
     }
-    
-    function showFirstfit()
-    {
-        var mycontext3=document.getElementById("firstfit").getContext('2d');
-        var sum = 0;
-        for(var i=0; i<blockf[0].length; i++)
-        {
-            r = blockf[0][i]/2;
-            if(blockf[1][i]==0)
-            {
-                mycontext3.fillStyle='yellow'; 
-                mycontext3.fillRect(sum,0,r,100);
-                mycontext3.strokeStyle='black';
-                mycontext3.strokeRect(sum,0,r,100);
-                mycontext3.fillStyle='black';
-                mycontext3.font = '15pt Calibri';
-                mycontext3.textAlign='center'; 
-                mycontext3.fillText( r*2 + 'KB', sum+r/2, 50);
-            }
-            else
-            {
-                mycontext3.fillStyle='red';
-                mycontext3.fillRect(sum,0,r,100);
-                mycontext3.strokeStyle='black';
-                mycontext3.strokeRect(sum,0,r,100);
-                mycontext3.fillStyle='black';
-                mycontext3.font = '15pt Calibri';
-                mycontext3.textAlign='center';
-                mycontext3.fillText( 'ID:' + blockf[1][i], sum+r/2, 30); 
-                mycontext3.fillText( r*2 + 'KB', sum+r/2, 60);
-            }
-            sum += r;
-        }
-    }
+
+
     
     function add(val)
     {
@@ -419,9 +355,12 @@ canvas#main{
       else
         add(next);
     
-        showBestfit();
-        showWorstfit();
-        showFirstfit();
+        //showBestfit();
+        showBlock("bestfit",blockb);
+        //showWorstfit();
+        showBlock("worstfit",blockw);
+        //showFirstfit();
+        showBlock("firstfit",blockf);
         
         flag = Math.floor(Math.random()*4);
         if(flag >=2 && num > 3)
@@ -472,9 +411,12 @@ canvas#main{
         if(next<150)
             next += 150;
         
-        showBestfit();
-        showWorstfit();
-        showFirstfit();
+        //showBestfit();
+        showBlock("bestfit",blockb);
+        //showWorstfit();
+        showBlock("worstfit",blockw);
+        //showFirstfit();
+        showBlock("firstfit",blockf);
         mmsg();
     }
   
@@ -510,7 +452,7 @@ canvas#main{
 <body>
 
 <div style="margin-left:0px;">
-    <canvas id="main"></canvas>
+    <canvas id="main" width="500" height="200"></canvas>
     <div id="buttons">
         <button onclick="startt()">Start</button>
         <button onclick="stopp()">Stop</button>

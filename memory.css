@@ -1,0 +1,22 @@
+#buttons {
+    position: absolute;
+    top: 150px;
+    left: 380px;
+}
+
+p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+
+canvas{
+    width: 1250px;
+    height: 100px;
+    background-color: white;
+    border: 3px black solid;
+}
+
+canvas#main{
+    width: 500px;
+    height: 200px;
+}

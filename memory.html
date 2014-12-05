@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="memory.css">
+    <meta charset="UTF-8">
     <title>Memory Simulation</title>
+    <link rel="stylesheet" type="text/css" href="memory.css">
 </head>
 
 <body>
-
-<div style="margin-left:0;">
-    <canvas id="main" width="500" height="200"></canvas>
+<div>
+    <!--<canvas id="main" width="500" height="200"></canvas>-->
+    <p id ="main"></p>
     <div id="buttons">
         <button onclick="startStimulation()">Start</button>
         <button onclick="stopStimulation()">Stop</button>
         <br/>
         <button onclick="stepOver()">Next</button>
-        <button onclick="clearContent()">Clear</button>
+        <button onclick="initContent()">Clear</button>
     </div>
-
-    <canvas id="test" width="1250" height="100"></canvas>
 
     <p>Best Fit</p>
     <canvas id="bestFit" width="1250" height="100" ></canvas>

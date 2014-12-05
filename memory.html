@@ -29,7 +29,6 @@ canvas#main{
 
 </style>
 <title>Memory Simulation</title>
-<!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
 <script>
     
     var bestFitBlockCSizeArr=[2500];
@@ -56,24 +55,20 @@ canvas#main{
     
     window.onload=function()
     {
-    var mycontext1=document.getElementById("bestfit").getContext('2d');
-    var mycontext2=document.getElementById("worstfit").getContext('2d');
-    var mycontext3=document.getElementById("firstfit").getContext('2d');
+        var mycontext1=document.getElementById("bestfit").getContext('2d');
+        var mycontext2=document.getElementById("worstfit").getContext('2d');
+        var mycontext3=document.getElementById("firstfit").getContext('2d');
 
-    next=Math.floor(Math.random()*400);
-    if(next<150)
-        next += 150;
-    flag = 1;
+        next=Math.floor(Math.random()*400);
+        if(next<150)
+            next += 150;
+        flag = 1;
     
 
-    showBlock("bestfit",blockb);
-    showBlock("worstfit",blockw);
-    showBlock("firstfit",blockf);
-
-    //showBestfit();
-    //showWorstfit();
-    //showFirstfit();
-    mmsg();
+        showBlock("bestfit",blockb);
+        showBlock("worstfit",blockw);
+        showBlock("firstfit",blockf);
+        mmsg();
     }
 
     function showBlock(name, block)
@@ -109,60 +104,40 @@ canvas#main{
             sum += r;
         }
     }
-
-
-    
+ 
     function add(val)
     {
         flagb = 0;
         var min=2500;
-        for(var i=0; i<bestFitBlockCSizeArr.length; i++)
+        for(var i=0; i<blockb[0].length; i++)
         {
-            if(bestFitBlockCSizeArr[i]>=val && bestFitBlockCSizeArr[i]<min && blockb[1][i]==0)
-                min = bestFitBlockCSizeArr[i];
+            if(blockb[0][i]>=val && blockb[0][i]<min && blockb[1][i]==0)
+                min = blockb[0][i];
         }
-        for(var i=0; i<bestFitBlockCSizeArr.length; i++)
+        for(var i=0; i<blockb[0].length; i++)
         {
-            if(bestFitBlockCSizeArr[i] == min)
+            if(blockb[0][i] == min)
             {
-                for(var j=bestFitBlockCSizeArr.length; j>i; j--)
-                {
-                    bestFitBlockCSizeArr[j] = bestFitBlockCSizeArr[j-1];
-                    blockb[1][j] = blockb[1][j-1];
-                }
-                
-                bestFitBlockCSizeArr[i+1] = bestFitBlockCSizeArr[i]-val;
-                blockb[1][i+1] = 0;
-                
-                bestFitBlockCSizeArr[i] = val;
-                blockb[1][i] = pro;
+                blockb[0].splice(i, 1, val, blockb[0][i]-val);
+                blockb[1].splice(i, 0, pro);
                 flagb=1;
                 break;
             }
         }
-      flagw = 0;
-      var max = 0;
-      for(var i=0; i<blockw[0].length; i++)
-      {
-        if(blockw[0][i]>=val && blockw[0][i]>max && blockw[1][i]==0)
-          max = blockw[0][i];
-      }
-      
+
+        flagw = 0;
+        var max = 0;
+        for(var i=0; i<blockw[0].length; i++)
+        {
+            if (blockw[0][i] >= val && blockw[0][i] > max && blockw[1][i] == 0)
+                max = blockw[0][i];
+        }
         for(var i=0; i<blockw[0].length; i++)
         {
             if(blockw[0][i] == max)
             {
-                for(var j=blockw[0].length; j>i; j--)
-                {
-                    blockw[0][j] = blockw[0][j-1];
-                    blockw[1][j] = blockw[1][j-1];
-                }
-                
-                blockw[0][i+1] = blockw[0][i]-val;
-                blockw[1][i+1] = 0;
-                
-                blockw[0][i] = val;
-                blockw[1][i] = pro;
+                blockw[0].splice(i, 1, val, blockw[0][i]-val);
+                blockw[1].splice(i, 0, pro);
                 flagw = 1;
                 break;
             }
@@ -173,21 +148,13 @@ canvas#main{
         {
             if(blockf[0][i] >= val && blockf[1][i]==0)
             {
-                for(var j=blockf[0].length; j>i; j--)
-                {
-                    blockf[0][j] = blockf[0][j-1];
-                    blockf[1][j] = blockf[1][j-1];
-                }
-                
-                blockf[0][i+1] = blockf[0][i]-val;
-                blockf[1][i+1] = 0;
-                
-                blockf[0][i] = val;
-                blockf[1][i] = pro;
+                blockf[0].splice(i, 1, val, blockf[0][i]-val);
+                blockf[1].splice(i, 0, pro);
                 flagf = 1;
                 break;
             }
         }
+        
         ext.push(1);
         pro++;
         num++;
@@ -211,155 +178,86 @@ canvas#main{
     
     function sub(val)
     {
-      var tmp=0;
+        var processToDelete = 0;
+        for(var i=0; i<blockb[0].length; i++)
+        {
+            if(blockb[1][i] == val)
+            {   
+                processToDelete = i;
+                break;
+            }
+        }
+        remove(processToDelete, blockb);
+
       
-      var len=bestFitBlockCSizeArr.length;
-      for(var i=0; i<bestFitBlockCSizeArr.length; i++)
-      {
-        if(blockb[1][i] == val)
-        {   
-            tmp = i;
-            break;
-        }
-      }
-      if(blockb[1][tmp-1]==0 && blockb[1][tmp+1]==0)
-      {
-        bestFitBlockCSizeArr[tmp-1] = bestFitBlockCSizeArr[tmp-1] + bestFitBlockCSizeArr[tmp] + bestFitBlockCSizeArr[tmp+1];
-        for(var i=tmp; i<len; i++)
+        processToDelete = 0;
+        for(var i=0; i<blockw[0].length; i++)
         {
-          bestFitBlockCSizeArr[i] = bestFitBlockCSizeArr[i+2];
-          blockb[1][i] = blockb[1][i+2];
+            if(blockw[1][i] == val)
+            {   
+                processToDelete = i;
+                break;
+            }
         }
-        bestFitBlockCSizeArr.length -= 2;
-      }
-      else if(blockb[1][tmp-1]==0 && blockb[1][tmp+1]!=0)
-      {
-        bestFitBlockCSizeArr[tmp-1] = bestFitBlockCSizeArr[tmp-1] + bestFitBlockCSizeArr[tmp];
-        for(var i=tmp; i<len; i++)
-        {
-          bestFitBlockCSizeArr[i] = bestFitBlockCSizeArr[i+1];
-          blockb[1][i] = blockb[1][i+1];
-        }
-        bestFitBlockCSizeArr.length--;
-      }
-      else if(blockb[1][tmp-1]!=0 && blockb[1][tmp+1]==0)
-      {
-        bestFitBlockCSizeArr[tmp] = bestFitBlockCSizeArr[tmp] + bestFitBlockCSizeArr[tmp+1];
-        blockb[1][tmp] = 0;
-        for(var i=tmp+1; i<len; i++)
-        {
-          bestFitBlockCSizeArr[i] = bestFitBlockCSizeArr[i+1];
-          blockb[1][i] = blockb[1][i+1];
-        }
-        bestFitBlockCSizeArr.length--;
-      }
-      else
-        blockb[1][tmp] = 0;
+        remove(processToDelete, blockw);
+
       
-     tmp = 0;
-     len=blockw[0].length;
-      for(var i=0; i<blockw[0].length; i++)
-      {
-        if(blockw[1][i] == val)
-        {   
-            tmp = i;
-            break;
-        }
-      }
-      if(blockw[1][tmp-1]==0 && blockw[1][tmp+1]==0)
-      {
-        blockw[0][tmp-1] = blockw[0][tmp-1] + blockw[0][tmp] + blockw[0][tmp+1];
-        for(var i=tmp; i<len; i++)
+        processToDelete = 0;
+        for(var i=0; i<blockf[0].length; i++)
         {
-          blockw[0][i] = blockw[0][i+2];
-          blockw[1][i] = blockw[1][i+2];
+            if(blockf[1][i] == val)
+            {
+                processToDelete = i;
+                break;
+            }
         }
-        blockw[0].length -= 2;
-      }
-      else if(blockw[1][tmp-1]==0 && blockw[1][tmp+1]!=0)
-      {
-        blockw[0][tmp-1] = blockw[0][tmp-1] + blockw[0][tmp];
-        for(var i=tmp; i<len; i++)
-        {
-          blockw[0][i] = blockw[0][i+1];
-          blockw[1][i] = blockw[1][i+1];
-        }
-        blockw[0].length--;
-      }
-      else if(blockw[1][tmp-1]!=0 && blockw[1][tmp+1]==0)
-      {
-        blockw[0][tmp] = blockw[0][tmp] + blockw[0][tmp+1];
-        blockw[1][tmp] = 0;
-        for(var i=tmp+1; i<len; i++)
-        {
-          blockw[0][i] = blockw[0][i+1];
-          blockw[1][i] = blockw[1][i+1];
-        }
-        blockw[0].length--;
-      }
-      else
-        blockw[1][tmp] = 0;
+        remove(processToDelete, blockf);
+
       
-      tmp = 0;  
-      len=blockf[0].length;
-      for(var i=0; i<blockf[0].length; i++)
-      {
-        if(blockf[1][i] == val)
-        {   
-            tmp = i;
-            break;
-        }
-      }
-      if(blockf[1][tmp-1]==0 && blockf[1][tmp+1]==0)
-      {
-        blockf[0][tmp-1] = blockf[0][tmp-1] + blockf[0][tmp] + blockf[0][tmp+1];
-        for(var i=tmp; i<len; i++)
-        {
-          blockf[0][i] = blockf[0][i+2];
-          blockf[1][i] = blockf[1][i+2];
-        }
-        blockf[0].length -= 2;
-      }
-      else if(blockf[1][tmp-1]==0 && blockf[1][tmp+1]!=0)
-      {
-        blockf[0][tmp-1] = blockf[0][tmp-1] + blockf[0][tmp];
-        for(var i=tmp; i<len; i++)
-        {
-          blockf[0][i] = blockf[0][i+1];
-          blockf[1][i] = blockf[1][i+1];
-        }
-        blockf[0].length--;
-      }
-      else if(blockf[1][tmp-1]!=0 && blockf[1][tmp+1]==0)
-      {
-        blockf[0][tmp] = blockf[0][tmp] + blockf[0][tmp+1];
-        blockf[1][tmp] = 0;
-        for(var i=tmp+1; i<len; i++)
-        {
-          blockf[0][i] = blockf[0][i+1];
-          blockf[1][i] = blockf[1][i+1];
-        }
-        blockf[0].length--;
-      }
-      else
-        blockf[1][tmp] = 0; 
-      
-      ext[val]=0;
-      num--;
+        ext[val]=0;
+        num--;
     }
+
+    function remove(processToDelete, block)
+    {
+        var total = 0;
+
+        if(processToDelete > 0 && processToDelete < block[0].length - 1
+            && block[1][processToDelete-1]==0 && block[1][processToDelete+1]==0)
+        {
+            total = block[0][processToDelete-1] + block[0][processToDelete] + block[0][processToDelete+1];
+            block[0].splice(processToDelete-1, 3, total);
+            block[1].splice(processToDelete, 2);
+        }
+        else if(processToDelete > 0 && block[1][processToDelete-1]==0
+            && (processToDelete >= block[0].length -1 || block[1][processToDelete+1]!=0))
+        {
+            total = block[0][processToDelete-1] + block[0][processToDelete];
+            block[0].splice(processToDelete-1, 2, total);
+            block[1].splice(processToDelete,1);
+        }
+        else if( (processToDelete == 0 || block[1][processToDelete-1]!=0 )
+            && processToDelete < block[0].length - 1 && block[1][processToDelete+1]==0)
+        {
+            total = block[0][processToDelete] + block[0][processToDelete+1];
+            block[0].splice(processToDelete, 2, total);
+            block[1].splice(processToDelete,1);
+        }
+        else
+        {
+            block[1][processToDelete] = 0;
+        }
+    }
+
     function step()
     {
-      
-      if(flag>=2)
-        sub(del);
-      else
-        add(next);
-    
-        //showBestfit();
+        if(flag>=2)
+            sub(del);
+        else
+            add(next);
+
         showBlock("bestfit",blockb);
-        //showWorstfit();
         showBlock("worstfit",blockw);
-        //showFirstfit();
         showBlock("firstfit",blockf);
         
         flag = Math.floor(Math.random()*4);
@@ -376,10 +274,7 @@ canvas#main{
             if(next<150)
                 next += 150;
         }
-        mmsg(); 
-        
-        //setTimeout("step()",1000);
-        
+        mmsg();
     }
     
     function clearr()
@@ -433,6 +328,18 @@ canvas#main{
             mycontext7.fillText( 'Next: Delete ID' + del , 100, 100);
         else
             mycontext7.fillText( 'Next: Add ' + next + 'KB', 100, 100);
+
+//        var mycontext8=document.getElementById("test").getContext('2d');
+//        mycontext8.fillStyle='white';
+//        mycontext8.fillRect(0,0, 1250, 100);
+//        mycontext8.fillStyle='black';
+//        mycontext8.font = '15pt Calibri';
+//        mycontext8.fillText(blockb[0].length, 50, 30);
+//        mycontext8.fillText(blockb[1], 50, 50);
+//        mycontext8.fillText(blockw[0].length, 250, 30);
+//        mycontext8.fillText(blockw[1], 250, 50);
+//        mycontext8.fillText(blockf[0].length, 450, 30);
+//        mycontext8.fillText(blockf[1], 450, 50);
     }
     
     function startt()
@@ -460,6 +367,9 @@ canvas#main{
         <button onclick="step()">Next</button>
         <button onclick="clearr()">Clear</button>
     </div>
+    <!--
+    <canvas id="test" width="1250" height="100"></canvas>
+    -->
 
     <p>Best Fit</p>
     <canvas id="bestfit" width="1250" height="100" ></canvas>

@@ -20,18 +20,20 @@ function showBlock(name, block)
     var sum = 0;
     for(var i=0; i < block[0].length; i++)
     {
-        r = block[0][i]/2;
-        context.fillStyle = block[1][i] == 0 ?  'yellow' : 'red';
-        context.fillRect(sum,0,r,100);
-        context.strokeStyle='black';
-        context.strokeRect(sum,0,r,100);
-        context.fillStyle='black';
+        r = block[0][i] / 2;
+        context.fillStyle = block[1][i] == 0 ? 'yellow' : 'red';
+        context.fillRect(sum, 0, r, 100);
+        context.strokeStyle = 'black';
+        context.strokeRect(sum, 0, r, 100);
+        context.fillStyle = 'black';
         context.font = '15pt Calibri';
-        context.textAlign='center';
-        if(block[1][i] == 0)
-            context.fillText( r*2 + 'KB', sum+r/2, 50);
-        else
-            context.fillText( r*2 + 'KB', sum+r/2, 60);
+        context.textAlign = 'center';
+        if (block[1][i] == 0) {
+            context.fillText(r * 2 + 'KB', sum + r / 2, 50);
+        } else {
+            context.fillText(r * 2 + 'KB', sum + r / 2, 60);
+            context.fillText( 'ID:' + block[1][i], sum+r/2, 30);
+        }
         sum += r;
     }
 }
@@ -39,38 +41,45 @@ function showBlock(name, block)
 function add(val)
 {
     flagb = 0;
-    var min=2500;
+    var min = 2500;
+    var index = -1;
     for(var i=0; i<blockb[0].length; i++)
     {
-        if(blockb[0][i]>=val && blockb[0][i]<min && blockb[1][i]==0)
+        if(blockb[0][i] >= val && blockb[0][i] <= min && blockb[1][i] == 0) {
             min = blockb[0][i];
+            index = i;
+        }
     }
-    for(var i=0; i<blockb[0].length; i++)
+    if(index > -1)
     {
-        if(blockb[0][i] == min)
-        {
-            blockb[0].splice(i, 1, val, blockb[0][i]-val);
-            blockb[1].splice(i, 0, nextId);
-            flagb=1;
-            break;
+        flagb = 1;
+        if (min == val) {
+            blockb[1][index] = 1;
+        } else {
+            blockb[0].splice(index, 1, val, blockb[0][index] - val);
+            blockb[1].splice(index, 0, nextId);
         }
     }
 
+
     flagw = 0;
     var max = 0;
+    index = -1;
     for(var i=0; i<blockw[0].length; i++)
     {
-        if (blockw[0][i] >= val && blockw[0][i] > max && blockw[1][i] == 0)
+        if (blockw[0][i] >= val && blockw[0][i] > max && blockw[1][i] == 0) {
             max = blockw[0][i];
+            index = i;
+        }
     }
-    for(var i=0; i<blockw[0].length; i++)
+    if(index > -1)
     {
-        if(blockw[0][i] == max)
-        {
-            blockw[0].splice(i, 1, val, blockw[0][i]-val);
-            blockw[1].splice(i, 0, nextId);
-            flagw = 1;
-            break;
+        flagw = 1;
+        if (max == val) {
+            blockw[1][index] = 1;
+        } else {
+            blockw[0].splice(index, 1, val, blockw[0][index] - val);
+            blockw[1].splice(index, 0, nextId);
         }
     }
 
@@ -79,41 +88,52 @@ function add(val)
     {
         if(blockf[0][i] >= val && blockf[1][i]==0)
         {
-            blockf[0].splice(i, 1, val, blockf[0][i]-val);
-            blockf[1].splice(i, 0, nextId);
             flagf = 1;
+            if (blockf[0][i] == val) {
+                blockf[1][i] = 1;
+            } else {
+                blockf[0].splice(i, 1, val, blockf[0][i]-val);
+                blockf[1].splice(i, 0, nextId);
+            }
             break;
         }
     }
 
     processIdArr.push(nextId++);
 
-    if(flagb==0 && flagw==0 && flagf==0)
-        alert("Best fit & Worst fit & First fit have no more block for this process. Please kick 'clear' to restart.");
-    else if(flagb==0 && flagw==0)
-        alert("Best fit & Worst fit have no more block for this process. Please kick 'clear' to restart.");
-    else if(flagw==0 && flagf==0)
-        alert("Worst fit & First fit have no more block for this process. Please kick 'clear' to restart.");
-    else if(flagb==0 && flagf==0)
-        alert("Best fit & First fit have no more block for this process. Please kick 'clear' to restart.");
-    else if(flagb==0 )
-        alert("Best fit has no more block for this process. Please kick 'clear' to restart.");
-    else if(flagw==0 )
-        alert("Worst fit has no more block for this process. Please kick 'clear' to restart.");
-    else if(flagf==0 )
-        alert("First fit has no more block for this process. Please kick 'clear' to restart.");
+    var messageArr = [];
+    if(flagb == 0) messageArr.push("Best fit");
+    if(flagw == 0) messageArr.push("Worst fit");
+    if(flagf == 0) messageArr.push("First fit");
+    if(messageArr.length > 0)
+        alert(messageArr.join(" , ") + (messageArr.length > 1 ? " have " : " has ") +
+                    "no more block for this process. Please kick 'clear' and restart.");
+    //if(flagb==0 && flagw==0 && flagf==0)
+    //    alert("Best fit & Worst fit & First fit have no more block for this process. Please kick 'clear' to restart.");
+    //else if(flagb==0 && flagw==0)
+    //    alert("Best fit & Worst fit have no more block for this process. Please kick 'clear' to restart.");
+    //else if(flagw==0 && flagf==0)
+    //    alert("Worst fit & First fit have no more block for this process. Please kick 'clear' to restart.");
+    //else if(flagb==0 && flagf==0)
+    //    alert("Best fit & First fit have no more block for this process. Please kick 'clear' to restart.");
+    //else if(flagb==0 )
+    //    alert("Best fit has no more block for this process. Please kick 'clear' to restart.");
+    //else if(flagw==0 )
+    //    alert("Worst fit has no more block for this process. Please kick 'clear' to restart.");
+    //else if(flagf==0 )
+    //    alert("First fit has no more block for this process. Please kick 'clear' to restart.");
 
 }
+
+
 
 function sub(val)
 {
     var processToDelete = blockb[1].indexOf(val);
     remove(processToDelete, blockb);
 
-
     processToDelete = blockw[1].indexOf(val);
     remove(processToDelete, blockw);
-
 
     processToDelete = blockf[1].indexOf(val);
     remove(processToDelete, blockf);
@@ -221,7 +241,7 @@ function mmsg()
 //        mycontext8.fillText(processIdArr, 50, 30);
 //        mycontext8.fillText(nextId, 50, 70);
 //        mycontext8.fillText(flag, 150, 70);
-//        mycontext8.fillText(blockb[0].length, 50, 30);
+    mycontext8.fillText(blockb[0], 150, 30);
     mycontext8.fillText(blockb[1], 50, 30);
 //        mycontext8.fillText(blockw[0].length, 250, 30);
     mycontext8.fillText(blockw[1], 50, 50);

@@ -6,7 +6,7 @@ Simulate how Best Fit, Worst Fit and First Fit works.
 
 ####Usage
 
-- Open memory.html
+- Open index.html
 - Click `start` to excute
 - Click `stop` to stop
 - Click `next` to excute single time

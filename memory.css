@@ -1,7 +1,19 @@
+h2{
+    padding-left: 500px;
+}
+
+div{
+    padding-left: 20px;
+}
+
 div#buttons {
     position: absolute;
-    top: 150px;
-    left: 380px;
+    top: 180px;
+    left: 450px;
+}
+
+button{
+    margin: 2px;
 }
 
 p {
@@ -9,13 +21,19 @@ p {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 20px;
 }
-
-p#main{
-    width: 500px;
-    height: 200px;
-    border: 3px black solid;
-    padding-left: 50px;
+p#message {
+    border: 2px black solid;
     padding-top: 50px;
+}
+p.float{
+    width: 500px;
+    height: 100px;
+    float: left;
+    padding-left: 50px;
+}
+
+p.title{
+    clear: both;
 }
 
 canvas{

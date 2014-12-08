@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Memory Simulation</title>
@@ -7,24 +7,34 @@
 </head>
 
 <body>
+<h2>Memory Simulation</h2>
 <div>
-    <!--<canvas id="main" width="500" height="200"></canvas>-->
-    <p id ="main"></p>
+    <p class="float" id ="message"></p>
     <div id="buttons">
-        <button onclick="startStimulation()">Start</button>
-        <button onclick="stopStimulation()">Stop</button>
+        <button id="start" onclick="startStimulation()">Start</button>
+        <button id="stop" onclick="stopStimulation()">Stop</button>
         <br/>
-        <button onclick="stepOver()">Next</button>
+        <button id="next" onclick="stepOver()">Next</button>
         <button onclick="initContent()">Clear</button>
     </div>
+    <p class="float">
+        Simulate how Best Fit, Worst Fit and First Fit works.
+        <br/>
+        <strong>Usage:</strong>
+        <br/>
+        Click <strong>start</strong> to excute <br>
+        Click <strong>stop</strong> to stop <br>
+        Click <strong>next</strong> to excute single time<br>
+        Click <strong>clear</strong> to reset whole page
+    </p>
 
-    <p>Best Fit</p>
+    <p class="title">Best Fit</p>
     <canvas id="bestFit" width="1250" height="100" ></canvas>
 
-    <p>Worst Fit</p>
+    <p class="title">Worst Fit</p>
     <canvas id="worstFit" width="1250" height="100"></canvas>
 
-    <p>First Fit</p>
+    <p class="title">First Fit</p>
     <canvas id="firstFit" width="1250" height="100" ></canvas>
 </div>
 <script src="simulate.js"></script>

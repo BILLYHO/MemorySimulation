@@ -1,22 +1,75 @@
-var blockb=[[2500],[0]];
-var blockw=[[2500],[0]];
-var blockf=[[2500],[0]];
+var blockb, blockw, blockf;
+var processIdArr, nextProcessId;
 
-var processIdArr = [];
-var nextId = 1;
-
-
-var flag;
-var next;
-var del;
-var flagb,flagw,flagf;
+var choice, nextSize, deleteId;
+var flagb, flagw, flagf;
 var timer;
 
 initContent();
 
+function initContent()
+{
+    blockb = [[2500],[0]];
+    blockw = [[2500],[0]];
+    blockf = [[2500],[0]];
+
+    processIdArr = [];
+    nextProcessId = 1;
+
+    flagb = 1;
+    flagw = 1;
+    flagf = 1;
+
+    enableButton();
+    showAllBlocks();
+    prepareNext();
+}
+
+function stepOver()
+{
+    if (choice < 2) addProcess(nextSize);
+    else removeProcess(deleteId);
+
+    showAllBlocks();
+    prepareNext();
+}
+
+function prepareNext()
+{
+    choice =  Math.floor(Math.random() * 4);
+    if (choice >= 2 && processIdArr.length > 3) {
+        deleteId = processIdArr[Math.floor(Math.random() * processIdArr.length)];
+    } else {
+        choice = 1;
+        nextSize = Math.floor(Math.random() * 400);
+        if (nextSize < 150) nextSize += 150;
+    }
+    showMessage();
+}
+function disableButton()
+{
+    document.getElementById("start").disabled = true;
+    document.getElementById("stop").disabled = true;
+    document.getElementById("next").disabled = true;
+}
+
+function enableButton()
+{
+    document.getElementById("start").disabled = false;
+    document.getElementById("stop").disabled = false;
+    document.getElementById("next").disabled = false;
+}
+
+function showAllBlocks()
+{
+    showBlock("bestFit", blockb);
+    showBlock("worstFit", blockw);
+    showBlock("firstFit", blockf);
+}
+
 function showBlock(name, block)
 {
-    var context=document.getElementById(name).getContext('2d');
+    var context = document.getElementById(name).getContext('2d');
     var sum = 0;
     for(var i=0; i < block[0].length; i++)
     {
@@ -31,35 +84,32 @@ function showBlock(name, block)
         if (block[1][i] == 0) {
             context.fillText(r * 2 + 'KB', sum + r / 2, 50);
         } else {
-            context.fillText(r * 2 + 'KB', sum + r / 2, 60);
             context.fillText( 'ID:' + block[1][i], sum+r/2, 30);
+            context.fillText(r * 2 + 'KB', sum + r / 2, 60);
         }
         sum += r;
     }
 }
 
-function add(val)
+function addProcess(size)
 {
     flagb = 0;
     var min = 2500;
+    var messageArr = [];
     var index = -1;
     var i;
     for(i=0; i<blockb[0].length; i++)
     {
-        if(blockb[0][i] >= val && blockb[0][i] <= min && blockb[1][i] == 0) {
+        if(blockb[0][i] >= size && blockb[0][i] <= min && blockb[1][i] == 0) {
             min = blockb[0][i];
             index = i;
         }
     }
-    if(index > -1)
-    {
+    if(index > -1) {
         flagb = 1;
-        if (min == val) {
-            blockb[1][index] = 1;
-        } else {
-            blockb[0].splice(index, 1, val, blockb[0][index] - val);
-            blockb[1].splice(index, 0, nextId);
-        }
+        addProcessToBlock(blockb, index, min, size);
+    } else {
+        messageArr.push("Best fit");
     }
 
 
@@ -68,178 +118,116 @@ function add(val)
     index = -1;
     for(i=0; i<blockw[0].length; i++)
     {
-        if (blockw[0][i] >= val && blockw[0][i] > max && blockw[1][i] == 0) {
+        if (blockw[0][i] >= size && blockw[0][i] > max && blockw[1][i] == 0) {
             max = blockw[0][i];
             index = i;
         }
     }
-    if(index > -1)
-    {
+    if(index > -1) {
         flagw = 1;
-        if (max == val) {
-            blockw[1][index] = 1;
-        } else {
-            blockw[0].splice(index, 1, val, blockw[0][index] - val);
-            blockw[1].splice(index, 0, nextId);
-        }
+        addProcessToBlock(blockw, index, max, size);
+    } else {
+        messageArr.push("Worst fit");
     }
 
     flagf = 0;
     for(i=0; i<blockf[0].length; i++)
     {
-        if(blockf[0][i] >= val && blockf[1][i]==0)
+        if(blockf[0][i] >= size && blockf[1][i] == 0)
         {
             flagf = 1;
-            if (blockf[0][i] == val) {
-                blockf[1][i] = 1;
-            } else {
-                blockf[0].splice(i, 1, val, blockf[0][i]-val);
-                blockf[1].splice(i, 0, nextId);
-            }
+            addProcessToBlock(blockf, i, blockf[0][i], size);
             break;
         }
     }
-
-    processIdArr.push(nextId++);
-
-    var messageArr = [];
-    if(flagb == 0) messageArr.push("Best fit");
-    if(flagw == 0) messageArr.push("Worst fit");
     if(flagf == 0) messageArr.push("First fit");
-    if(messageArr.length > 0)
+
+    if(messageArr.length > 0) {
         alert(messageArr.join(" , ") + (messageArr.length > 1 ? " have " : " has ") +
                     "no more block for this process. Please kick 'clear' and restart.");
+        stopStimulation();
+        disableButton();
+    } else {
+        processIdArr.push(nextProcessId++);
+    }
 }
 
-
-
-function sub(val)
+function addProcessToBlock(block, index, blockSize, processSize)
 {
-    var processToDelete = blockb[1].indexOf(val);
-    remove(processToDelete, blockb);
+    if (blockSize == processSize) {
+        block[1][index] = nextProcessId;
+    } else {
+        block[0].splice(index, 1, processSize, blockSize - processSize);
+        block[1].splice(index, 0, nextProcessId);
+    }
+}
 
-    processToDelete = blockw[1].indexOf(val);
-    remove(processToDelete, blockw);
+function removeProcess(processId)
+{
+    var process = blockb[1].indexOf(processId);
+    deleteProcessAtBlock(blockb, process);
 
-    processToDelete = blockf[1].indexOf(val);
-    remove(processToDelete, blockf);
+    process = blockw[1].indexOf(processId);
+    deleteProcessAtBlock(blockw, process);
 
-    var index = processIdArr.indexOf(val);
+    process = blockf[1].indexOf(processId);
+    deleteProcessAtBlock(blockf, process);
+
+    var index = processIdArr.indexOf(processId);
     processIdArr.splice(index, 1);
 }
 
-function remove(processToDelete, block)
+function deleteProcessAtBlock(block ,process)
 {
     var total = 0;
 
-    if(processToDelete > 0 && processToDelete < block[0].length - 1
-        && block[1][processToDelete-1]==0 && block[1][processToDelete+1]==0)
+    if(process > 0 && process < block[0].length - 1
+        && block[1][process-1]==0 && block[1][process+1]==0)
     {
-        total = block[0][processToDelete-1] + block[0][processToDelete] + block[0][processToDelete+1];
-        block[0].splice(processToDelete-1, 3, total);
-        block[1].splice(processToDelete, 2);
+        total = block[0][process-1] + block[0][process] + block[0][process+1];
+        block[0].splice(process-1, 3, total);
+        block[1].splice(process, 2);
     }
-    else if(processToDelete > 0 && block[1][processToDelete-1]==0
-        && (processToDelete >= block[0].length -1 || block[1][processToDelete+1]!=0))
+    else if(process > 0 && block[1][process-1]==0
+        && (process >= block[0].length -1 || block[1][process+1]!=0))
     {
-        total = block[0][processToDelete-1] + block[0][processToDelete];
-        block[0].splice(processToDelete-1, 2, total);
-        block[1].splice(processToDelete,1);
+        total = block[0][process-1] + block[0][process];
+        block[0].splice(process-1, 2, total);
+        block[1].splice(process,1);
     }
-    else if( (processToDelete == 0 || block[1][processToDelete-1]!=0 )
-        && processToDelete < block[0].length - 1 && block[1][processToDelete+1]==0)
+    else if( (process == 0 || block[1][process-1]!=0 )
+        && process < block[0].length - 1 && block[1][process+1]==0)
     {
-        total = block[0][processToDelete] + block[0][processToDelete+1];
-        block[0].splice(processToDelete, 2, total);
-        block[1].splice(processToDelete,1);
+        total = block[0][process] + block[0][process+1];
+        block[0].splice(process, 2, total);
+        block[1].splice(process,1);
     }
     else
     {
-        block[1][processToDelete] = 0;
+        block[1][process] = 0;
     }
 }
 
-function stepOver()
+function showMessage()
 {
-    if(flag >= 2)
-        sub(del);
-    else
-        add(next);
-
-    showBlock("bestFit",blockb);
-    showBlock("worstFit",blockw);
-    showBlock("firstFit",blockf);
-
-    flag = Math.floor(Math.random()*4);
-    if(flag >=2 && processIdArr.length > 3)
-    {
-        del = processIdArr[Math.floor(Math.random()*processIdArr.length)];
+    var message = document.getElementById("message");
+    if(flagb == 0 || flagw == 0 || flagf == 0) {
+        message.innerHTML = 'Stimulation End.';
+    } else if(choice >=2) {
+        message.innerHTML = 'Next: Delete ID' + deleteId;
+    } else {
+        message.innerHTML = 'Next: Add ' + nextSize + 'KB';
     }
-    else
-    {
-        flag = 1;
-        next=Math.floor(Math.random()*400);
-        if(next<150)
-            next += 150;
-    }
-    mmsg();
-}
-
-function initContent()
-{
-    blockb = [[2500],[0]];
-    blockw = [[2500],[0]];
-    blockf = [[2500],[0]];
-
-    nextId = 1;
-    processIdArr = [];
-    flag = 1;
-
-    next=Math.floor(Math.random()*400);
-    if(next<150)
-        next += 150;
-
-    showBlock("bestFit",blockb);
-    showBlock("worstFit",blockw);
-    showBlock("firstFit",blockf);
-    mmsg();
-}
-
-function mmsg()
-{
-    var mycontext7=document.getElementById("main");
-    if(flag >=2)
-        mycontext7.innerHTML = 'Next: Delete ID' + del ;
-    else
-        mycontext7.innerHTML = 'Next: Add ' + next + 'KB';
 }
 
 function startStimulation()
 {
     stepOver();
-    if(flagb==1 && flagw==1 && flagf==1)
-        timer = setTimeout("startStimulation()",1000);
+    timer = setInterval("stepOver()", 1000);
 }
 
 function stopStimulation()
 {
-    clearTimeout(timer);
+    clearInterval(timer);
+    showMessage();
 }
-
-//function debugLog()
-//{
-//    var mycontext8=document.getElementById("test").getContext('2d');
-//    mycontext8.fillStyle='white';
-//    mycontext8.fillRect(0,0, 1250, 100);
-//    mycontext8.fillStyle='black';
-//    mycontext8.font = '15pt Calibri';
-//    mycontext8.fillText(processIdArr, 50, 30);
-//    mycontext8.fillText(nextId, 50, 70);
-//    mycontext8.fillText(flag, 150, 70);
-//    mycontext8.fillText(blockb[0], 150, 30);
-//    mycontext8.fillText(blockb[1], 50, 30);
-//    mycontext8.fillText(blockw[0].length, 250, 30);
-//    mycontext8.fillText(blockw[1], 50, 50);
-//    mycontext8.fillText(blockf[0].length, 450, 30);
-//    mycontext8.fillText(blockf[1], 50, 70);
-//}
